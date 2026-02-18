@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CS2 Разминка PRO</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#0f1923;
+    color:white;
+    text-align:center;
+}
+header{
+    padding:30px;
+    background:#1f2a35;
+}
+h1{
+    margin:0;
+    color:#ff4655;
+}
+.section{
+    margin:25px auto;
+    width:90%;
+    max-width:500px;
+    background:#1f2a35;
+    padding:20px;
+    border-radius:12px;
+}
+button{
+    padding:10px 20px;
+    margin:10px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    background:#ff4655;
+    color:white;
+    font-weight:bold;
+}
+button:hover{
+    opacity:0.8;
+}
+.exercise{
+    margin-top:15px;
+    font-size:18px;
+}
+.stats{
+    font-size:16px;
+    line-height:1.6;
+}
+</style>
+</head>
+<body>
+
+<header>
+    <h1>🔥 Разминка перед каткой (CS2)</h1>
+</header>
+
+<div class="section">
+    <h2>⏱ Таймер разминки (5 мин)</h2>
+    <p id="timer">10:00</p>
+    <button onclick="startTimer()">Старт</button>
+</div>
+
+<div class="section">
+    <h2>🎯 Рандомное упражнение</h2>
+    <button onclick="newExercise()">Получить задание</button>
+    <div class="exercise" id="exerciseText">Нажми кнопку 👆</div>
+</div>
+
+<div class="section">
+    <h2>📊 Статистика</h2>
+    <div class="stats">
+        Разминок пройдено: <span id="statSessions">0</span><br>
+        Всего минут разминки: <span id="statMinutes">0</span><br>
+        Получено заданий: <span id="statExercises">0</span>
+    </div>
+    <button onclick="resetStats()">Сбросить статистику</button>
+</div>
+
+<script>
+let time = 300;
+let interval;
+
+let sessions = localStorage.getItem("sessions") || 0;
+let minutes = localStorage.getItem("minutes") || 0;
+let exercisesCount = localStorage.getItem("exercises") || 0;
+
+updateStats();
+
+function startTimer(){
+    clearInterval(interval);
+    time = 300;
+
+    interval = setInterval(function(){
+        let minutesLeft = Math.floor(time/60);
+        let seconds = time%60;
+        if(seconds<10) seconds="0"+seconds;
+        document.getElementById("timer").innerText = minutesLeft + ":" + seconds;
+        time--;
+
+        if(time<0){
+            clearInterval(interval);
+            sessions++;
+            minutes = parseInt(minutes) + 5;
+
+            localStorage.setItem("sessions", sessions);
+            localStorage.setItem("minutes", minutes);
+
+            updateStats();
+            alert("Разминка окончена! Можно идти разносить 🔥");
+        }
+    },1000);
+}
+
+const exercises = [
+"100 хедшотов на ботах",
+"5 минут только AK-47",
+"5 минут только M4",
+"Флики на AWP 5 минут",
+"Спрей на стену 3 минуты",
+"Только префайры 5 минут",
+"10 минут DM",
+"карта префайр на medium"
+];
+
+function newExercise(){
+    let random = Math.floor(Math.random()*exercises.length);
+    document.getElementById("exerciseText").innerText = exercises[random];
+
+    exercisesCount++;
+    localStorage.setItem("exercises", exercisesCount);
+    updateStats();
+}
+
+function updateStats(){
+    document.getElementById("statSessions").innerText = sessions;
+    document.getElementById("statMinutes").innerText = minutes;
+    document.getElementById("statExercises").innerText = exercisesCount;
+}
+
+function resetStats(){
+    localStorage.clear();
+    sessions = 0;
+    minutes = 0;
+    exercisesCount = 0;
+    updateStats();
+}
+</script>
+
+</body>
+</html>
